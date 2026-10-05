@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head>
+<head> <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pianomin</title>
@@ -116,6 +116,18 @@
     setBusy(true);
 
     const typingBubble = addBubble('Pianomin 正在輸入…', 'bot typing');
+    const inputEl = document.getElementById('input');
+   // 點擊 / 聚焦時讓提示文字消失
+  inputEl.addEventListener('focus', function () {
+   this.placeholder = '';
+  });
+
+// 失焦且沒有內容時再把提示文字加回來（可選，體驗更好）
+  inputEl.addEventListener('blur', function () {
+  if (!this.value.trim()) {
+    this.placeholder = '跟 Pianomin 說點什麼...';
+   }
+  });
 
     try {
       // 這裡的路徑對應到 api/chat.js，Vercel 部署後會自動生效
