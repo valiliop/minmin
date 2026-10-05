@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>哈民</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #f4f1ff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .app {
+    width: 100%;
+    max-width: 460px;
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid #e4defc;
+    display: flex;
+    flex-direction: column;
+    height: 640px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(60, 40, 120, 0.08);
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    border-bottom: 1px solid #e4defc;
+    background: #efe9ff;
+  }
+  .avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+  .header-text h1 { margin: 0; font-size: 16px; color: #2b2440; }
+  .header-text p { margin: 2px 0 0; font-size: 12px; color: #8b83a3; }
+  .messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { max-width: 80%; padding: 10px 14px; border-radius: 16px; line-height: 1.5; font-size: 14px; white-space: pre-wrap; word-break: break-word; }
+  .msg.user { align-self: flex-end; background: #7c5cff; color: #fff; border-bottom-right-radius: 4px; }
+  .msg.bot { align-self: flex-start; background: #efe9ff; color: #2b2440; border-bottom-left-radius: 4px; }
+  .msg.typing { color: #8b83a3; font-style: italic; }
+  .composer { display: flex; gap: 8px; padding: 12px; border-top: 1px solid #e4defc; }
+  .composer input {
+    flex: 1; border: 1px solid #e4defc; background: #f4f1ff; color: #2b2440;
+    border-radius: 999px; padding: 10px 16px; font-size: 14px; outline: none;
+  }
+  .composer input:focus { border-color: #7c5cff; }
+  .composer button {
+    border: none; background: #7c5cff; color: white; border-radius: 999px;
+    padding: 0 20px; font-size: 14px; cursor: pointer; flex-shrink: 0;
+  }
+  .composer button:disabled { opacity: 0.5; cursor: default; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="avatar">
+      <img src="Pianomin.jpg" alt="Pianomin" />
+      </div>
+      <div class="header-text">
+        <h1>Pianomin</h1>
+        <p>我对着花许愿 希望睁眼你在我面前</p>
+      </div>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="composer">
+      <input id="input" type="text" placeholder="跟 Pianomin 說點什麼..." />
+      <button id="send">傳送</button>
+    </div>
+  </div>
+
+<script>
+  const messagesEl = document.getElementById('messages');
+  const inputEl = document.getElementById('input');
+  const sendBtn = document.getElementById('send');
+
+  let history = [];
+
+  function addBubble(text, who) {
+    const div = document.createElement('div');
+    div.className = 'msg ' + who;
+    div.textContent = text;
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return div;
+  }
+
+  function setBusy(busy) {
+    sendBtn.disabled = busy;
+    inputEl.disabled = busy;
+  }
+
+  async function send() {
+    const text = inputEl.value.trim();
+    if (!text) return;
+
+    addBubble(text, 'user');
+    history.push({ role: 'user', content: text });
+    inputEl.value = '';
+    setBusy(true);
+
+    const typingBubble = addBubble('Luna 正在輸入…', 'bot typing');
+
+    try {
+      // 這裡的路徑對應到 api/chat.js，Vercel 部署後會自動生效
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history }),
+      });
+
+      if (!res.ok) throw new Error('Request failed');
+
+      const data = await res.json();
+      typingBubble.textContent = data.reply;
+      typingBubble.classList.remove('typing');
+      history.push({ role: 'assistant', content: data.reply });
+    } catch (err) {
+      typingBubble.textContent = '（連線失敗，請稍後再試一次。）';
+      typingBubble.classList.remove('typing');
+      console.error(err);
+    } finally {
+      setBusy(false);
+      inputEl.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', send);
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') send();
+  });
+
+  addBubble('嗨女孩~我是Pianomin!想聊點什麼呢?', 'bot');
+</script>
+</body>
+</html>

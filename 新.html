@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>照片 - HAMIN World</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei",sans-serif;
+        }
+         html, body {
+         width: 100%;
+         height: 100%;
+         }
+   
+
+       /* 导航栏 */
+        .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 40px;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  /* 把背景写在最后一行，避免被其他同选择器覆盖 */
+  background: #F0E0F0 !important;
+
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 21px;
+    color: #ffffff;
+}
+
+.nav-links {
+    display: flex;
+    gap: 40px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 6px;
+}
+  :root{
+    --bg: #F7F3FB;
+    --card-bg: #FFFFFF;
+    --accent: #FF3D81;
+    --accent-2: #7C5CFC;
+    --text-main: #2E2A38;
+    --text-muted: #8B8696;
+    --radius: 16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:'Noto Sans SC', sans-serif;
+    color:var(--text-main);
+  }
+
+        /* 导航栏底部过渡渐变 */
+        .nav-fade {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 40px;
+
+ 
+}
+
+        /* 四列自动滚动区域 - 从顶部开始占满整个屏幕 */
+        .scroll-section {
+            width: 100%;
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            align-items: flex-start;
+        }
+
+        .scroll-column {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+            position: sticky;
+            top: 0;
+        }
+
+        .scroll-track {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            will-change: transform;
+        }
+
+        /* 四列不同速度和方向，速度适中舒适 */
+        .col-1 .scroll-track {
+            animation: scrollUp 190s linear infinite;
+        }
+
+        .col-2 .scroll-track {
+            animation: scrollDown 225s linear infinite;
+        }
+
+        .col-3 .scroll-track {
+            animation: scrollUp 250s linear infinite;
+        }
+
+        .col-4 .scroll-track {
+            animation: scrollDown 205s linear infinite;
+        }
+
+        @keyframes scrollUp {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+
+        @keyframes scrollDown {
+            0% { transform: translateY(-50%); }
+            100% { transform: translateY(0); }
+        }
+
+        /* 鼠标悬停暂停对应列 */
+        .scroll-column:hover .scroll-track {
+            animation-play-state: paused;
+        }
+
+        /* 照片项 */
+        .photo-item {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(200, 160, 200, 0.15);
+            cursor: pointer;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            position: relative;
+            background: white;
+        }
+
+        .photo-item img {
+            width: 100%;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(200, 160, 200, 0.4);
+            z-index: 10;
+        }
+
+        .photo-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .photo-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 70%, rgba(240, 224, 240, 0.5));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .photo-item:hover::after {
+            opacity: 1;
+        }
+
+        
+
+        /* 灯箱 */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .lightbox img {
+            max-width: 85%;
+            max-height: 85vh;
+            border-radius: 10px;
+            box-shadow: 0 0 60px rgba(240, 224, 240, 0.3);
+            animation: zoomIn 0.4s ease;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .lightbox-close:hover {
+            background: rgba(240, 224, 240, 0.4);
+            transform: rotate(90deg);
+        }
+
+        /* 飘落花瓣 */
+        .petal {
+            position: fixed;
+            top: -20px;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, #F0E0F0, #e8c8e8);
+            border-radius: 50% 0 50% 50%;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 998;
+        }
+
+        @keyframes petalFall {
+            0% {
+                transform: translateY(-20px) rotate(0deg) translateX(0px);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(50vh) rotate(180deg) translateX(30px);
+            }
+            100% {
+                transform: translateY(105vh) rotate(360deg) translateX(-20px);
+                opacity: 0;
+            }
+        }
+
+        /* 响应式 */
+        @media (max-width: 900px) {
+            nav .nav-links { gap: 20px; }
+            .col-4 { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            nav { padding: 12px 15px; }
+            nav .logo { font-size: 18px; }
+            nav .nav-links { gap: 10px; }
+            nav .nav-links a { font-size: 12px; padding: 4px 6px; }
+            .col-3 { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">HAMIN World</div>
+        <ul class="nav-links">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="about.html">关于民民</a></li>
+            <li><a href="stage.html">舞台合集</a></li>
+            <li><a href="fancam.html">演出直拍</a></li>
+            <li><a href="photos.html" class="active">照片</a></li>
+            <li><a href="other.html">其他</a></li>
+        </ul>
+    </nav>
+
+    <!-- 导航栏过渡渐变 -->
+    <div class="nav-fade"></div>
+
+    <!-- 四列自动滚动画廊 -->
+    <div class="scroll-section">
+        <div class="scroll-column col-1">
+            <div class="scroll-track" id="track1"></div>
+        </div>
+        <div class="scroll-column col-2">
+            <div class="scroll-track" id="track2"></div>
+        </div>
+        <div class="scroll-column col-3">
+            <div class="scroll-track" id="track3"></div>
+        </div>
+        <div class="scroll-column col-4">
+            <div class="scroll-track" id="track4"></div>
+        </div>
+    </div>
+
+    <!-- 底部延展区，让页面能自由上下滚动 -->
+    <div class="scroll-extension"></div>
+
+    <!-- 灯箱 -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">×</span>
+        <img id="lightboxImg" src="" alt="preview" onclick="event.stopPropagation()">
+    </div>
+
+    <script>
+        // ==================== 照片数据 ====================
+        const allPhotos = [
+         'picture/HAMIN1.0.jpg',
+         'picture/HAMIN2.0.jpg',
+         'picture/HAMIN3.0.png',
+         'picture/HAMIN4.0.jpg',
+         'picture/HAMIN5.0.jpg',
+         'picture/HAMIN6.0.jpg',
+         'picture/HAMIN7.0.jpg',
+         'picture/HAMIN8.0.jpg',
+         'picture/HAMIN9.0.jpg',
+         'picture/HAMIN10.0.jpg',
+         'picture/HAMIN11.0.jpg',
+         'picture/HAMIN12.0.jpg',
+         'picture/HAMIN13.0.jpg',
+         'picture/HAMIN14.0.jpg',
+         'picture/HAMIN15.0.jpg',
+         'picture/HAMIN16.0.jpg',
+         'picture/HAMIN17.0.jpg',
+         'picture/HAMIN18.0.jpg',
+         'picture/HAMIN19.0.jpg',
+         'picture/HAMIN20.0.jpg',
+         'picture/HAMIN21.0.jpg',
+         'picture/HAMIN22.0.jpg',
+         'picture/HAMIN23.0.jpg',
+         'picture/HAMIN24.0.jpg',
+         'picture/HAMIN25.0.jpg',
+         'picture/HAMIN26.0.jpg',
+         'picture/HAMIN27.0.jpg',
+
+    // 继续往下复制添加，有多少张写多少条
+];
+        // ==================== 分发照片到四列 ====================
+        function distributePhotos() {
+            const tracks = [
+                document.getElementById('track1'),
+                document.getElementById('track2'),
+                document.getElementById('track3'),
+                document.getElementById('track4')
+            ];
+
+            // 把所有照片均匀分到 4 列
+            allPhotos.forEach((src, i) => {
+                const colIndex = i % 4;
+                const item = createPhotoItem(src, i);
+                tracks[colIndex].appendChild(item);
+            });
+
+            // 每列复制一份，实现无缝循环滚动
+            tracks.forEach(track => {
+                const clone = track.cloneNode(true);
+                while (clone.firstChild) {
+                    track.appendChild(clone.firstChild);
+                }
+            });
+
+            // 绑定点击事件
+            rebindClickEvents();
+        }
+
+        // ==================== 创建照片元素 ====================
+        function createPhotoItem(src, index) {
+            const item = document.createElement('div');
+            item.className = 'photo-item';
+            item.dataset.index = index;
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = `photo ${index + 1}`;
+            img.loading = 'lazy';
+            item.appendChild(img);
+            return item;
+        }
+
+        // ==================== 绑定点击事件 ====================
+        function rebindClickEvents() {
+            document.querySelectorAll('.photo-item').forEach(item => {
+                const index = parseInt(item.dataset.index);
+                item.onclick = () => openLightbox(index);
+            });
+        }
+
+        // ==================== 初始化 ====================
+        distributePhotos();
+
+        // ==================== 灯箱 ====================
+        function openLightbox(index) {
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightboxImg');
+            img.src = allPhotos[index];
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        document.getElementById('lightbox').addEventListener('click', (e) => {
+            if (e.target.id === 'lightbox') closeLightbox();
+        });
+
+        // ==================== 飘落花瓣 ====================
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.left = Math.random() * 100 + 'vw';
+            const duration = 8 + Math.random() * 6;
+            petal.style.animation = `petalFall ${duration}s linear`;
+            const size = 8 + Math.random() * 10;
+            petal.style.width = size + 'px';
+            petal.style.height = size + 'px';
+            petal.style.opacity = 0.3 + Math.random() * 0.4;
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), duration * 1000);
+        }
+
+        setInterval(createPetal, 3000);
+    </script>
+</body>
+</html>

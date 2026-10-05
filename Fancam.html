@@ -1,0 +1,401 @@
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>演出直拍</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+/* 导航栏 */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 40px;
+    background: #F0E0F0;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 21px;
+    color: #ffffff;
+}
+
+.nav-links {
+    display: flex;
+    gap: 40px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 6px;
+}
+  :root{
+    --bg: #F7F3FB;
+    --card-bg: #FFFFFF;
+    --accent: #FF3D81;
+    --accent-2: #7C5CFC;
+    --text-main: #2E2A38;
+    --text-muted: #8B8696;
+    --radius: 16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:'Noto Sans SC', sans-serif;
+    color:var(--text-main);
+  }
+
+
+  /* 瀑布流(上下滑动)布局:用多栏 column 实现真正的 Pinterest 式错落 */
+  .wall{
+    max-width:1280px;
+    margin:40px auto 0;
+    padding:0 24px 60px;
+    column-count:4;
+    column-gap:16px;
+  }
+  @media (max-width:1000px){ .wall{ column-count:3; } }
+  @media (max-width:700px){ .wall{ column-count:2; } }
+  @media (max-width:420px){ .wall{ column-count:2; column-gap:10px; } }
+
+  .card{
+    position:relative;
+    background:var(--card-bg);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:0 2px 10px rgba(60,30,80,0.06);
+    display:block;
+    break-inside:avoid;
+    margin-bottom:16px;
+    cursor:pointer;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 24px rgba(60,30,80,0.14);
+  }
+
+  .thumb{
+    position:relative;
+    background-size:cover;
+    background-position:center;
+  }
+  .thumb::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(0,0,0,.45), transparent 55%);
+  }
+  .play-btn{
+    position:absolute;
+    top:50%; left:50%;
+    width:46px; height:46px;
+    margin:-23px 0 0 -23px;
+    border-radius:50%;
+    background:rgba(0,0,0,.45);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .2s ease, background .2s ease;
+    z-index:2;
+  }
+  .card:hover .play-btn{
+    background:var(--accent);
+    transform:scale(1.1);
+  }
+  .play-btn svg{ width:16px; height:16px; fill:#fff; margin-left:2px; }
+
+  .tag{
+    position:absolute;
+    top:10px; left:10px;
+    z-index:2;
+    font-size:11px;
+    padding:3px 9px;
+    border-radius:999px;
+    background:rgba(255,255,255,.9);
+    color:var(--accent-2);
+    font-weight:500;
+  }
+
+  .meta{
+    padding:12px 14px 14px;
+  }
+  .meta .v-title{
+    font-size:14px;
+    font-weight:500;
+    margin:0 0 4px;
+    line-height:1.3;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    display:-webkit-box;
+
+  }
+  .meta .v-date{
+    font-size:12px;
+    color:var(--text-muted);
+  }
+
+  .locked .thumb{ filter:grayscale(.5) brightness(.7); }
+  .locked .play-btn{ display:none; }
+  .locked .lock-label{
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    color:#fff; font-size:13px; font-weight:500;
+    z-index:2;
+    background:rgba(0,0,0,.35);
+    padding:6px 14px; border-radius:999px;
+  }
+
+  .load-more{
+    display:block;
+    margin:10px auto 0;
+    padding:10px 28px;
+    border-radius:999px;
+    border:1px solid var(--accent);
+    color:var(--accent);
+    background:#fff;
+    font-size:14px;
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .load-more:hover{ background:var(--accent); color:#fff; }
+  .load-wrap{ text-align:center; padding-bottom:40px; }
+
+  /* 点击弹窗播放 */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(20,10,20,.82);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:999;
+    padding:20px;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-box{
+    background:#0e0a12;
+    border-radius:18px;
+    overflow:hidden;
+    max-width:720px;
+    width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+    position:relative;
+    animation:popIn .25s ease;
+  }
+  @keyframes popIn{ from{ transform:scale(.92); opacity:0; } to{ transform:scale(1); opacity:1; } }
+  .modal-box video{
+    width:100%;
+    max-height:80vh;
+    display:block;
+    background:#000;
+  }
+  .modal-close{
+    position:absolute;
+    top:10px; right:10px;
+    width:34px; height:34px;
+    border-radius:50%;
+    background:rgba(255,255,255,.12);
+    color:#fff;
+    border:none;
+    font-size:18px;
+    line-height:1;
+    cursor:pointer;
+    z-index:2;
+    transition:background .2s ease;
+  }
+  .modal-close:hover{ background:var(--accent); }
+  .modal-info{
+    padding:14px 18px 18px;
+    color:#fff;
+  }
+  .modal-info .m-title{
+    font-family:'ZCOOL KuaiLe', sans-serif;
+    font-size:18px;
+    margin:0 0 4px;
+  }
+  .modal-info .m-date{
+    font-size:12px;
+    color:#c9b6cf;
+  }
+/* 页脚 */
+.footer {
+    background-color: #ffb6c1;
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    margin-top:60px ;
+    font-size: 15px;
+}
+ .footer-links a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+</style>
+</head>
+<body>
+
+  <!-- 外层容器加 class="navbar"-->
+<header class="navbar">
+  <div class="logo">HAMIN World</div>
+  <div class="nav-links">
+    <a href="hamin.html">首页</a>
+    <a href="about.html">关于民民</a>
+    <a href="stage.html">舞台合集</a>
+    <a href="Fancam.html"class="active">演出直拍</a>
+    <a href="photograph.html">照片</a>
+    <a href="more.html">其他</a>
+  </div>
+</header>
+
+<div class="wall" id="wall">
+  <!-- 卡片由 JS 生成,直接改下面的 data 数组替换成你的真实视频信息 -->
+</div>
+
+
+<!-- 点击卡片后弹出的播放窗 -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">✕</button>
+    <video id="modalVideo" controls></video>
+    <div class="modal-info">
+      <p class="m-title" id="modalTitle"></p >
+      <p class="m-date" id="modalDate"></p >
+    </div>
+  </div>
+</div>
+
+
+
+<script>                                                                                                 
+const videos = [
+  {title:"Show me your love", date:"2026-05-16", cat:"latest", color:"#f6c1d9, #f9e1c0", h:220, src:"showmeyourlove20260516_.mp4",thumbImg:"https://i.postimg.cc/wx40L3pX/showmeyourlover0516-0.png", locked:false},
+  {title:"梦想发射计划", date:"2026-05-15", cat:"latest", color:"#c7c8f6, #e2c8f6", h:320, src:"dream launch_20260515_2.mp4", thumbImg:"https://i.postimg.cc/PqV11kgy/IMG-20260515-184251.jpg", locked:false},
+  {title:"Dance out", date:"2026-05-15", cat:"latest", color:"#bcdff0, #d9c6f0", h:180, src:"danceout_20260515_01.mp4", thumbImg:"https://i.postimg.cc/qMPRtcZr/danceout-20260530154102-327-100.png", locked:false},
+  {title:"再次重逢的世界", date:"2026-05-15", cat:"practice", color:"#d8d2c4, #efe6d6", h:350, src:"zaicichonfengdeshijie_20260515.mp4", thumbImg:"https://i.postimg.cc/vHz2JJ7s/Videoshot-20260517-015431-motion-photo.jpg", locked:false},
+  {title:"点名环节", date:"2026-05-15", cat:"fancam", color:"#f0c6d8, #f6e3c1", h:200, src:"dianming1.0.20260515.mp4", thumbImg:"https://i.postimg.cc/CxV0LTXf/IMG-20260517-015727.jpg", locked:false},
+  {title:"扔骰子", date:"2026-05-15", cat:"fancam", color:"#c9e3f0, #d6cdf2", h:200, src:"rengrouzi_20260515.mp4", thumbImg:"https://i.postimg.cc/0jFtnwL2/IMG-20260515-212738.jpg", locked:false},
+  {title:"小火车 01", date:"2026-05-15", cat:"quote", color:"#f3d5c5, #f6c9e0", h:150, src:"xunchang_20260515_01.mp4", thumbImg:"https://i.postimg.cc/Ss874vPr/IMG-20260515-182138.jpg", locked:false},
+  {title:"小火车 02", date:"2026-05-15", cat:"practice", color:"#cfe8d8, #e3f0c9", h:200, src:"xunchang_20260515_02.mp4", thumbImg:"https://i.postimg.cc/nL1pWFFw/IMG-20260515-182218.jpg", locked:false},
+  {title:"Wolf", date:"2026-05-15", cat:"latest", color:"#f6c1c1, #f6e0c1", h:340, src:"wolf_20260517.mp4", thumbImg:"https://i.postimg.cc/KYdcLqYG/Videoshot-20260517-015055-motion-photo.jpg", locked:false},
+  {title:" Tribute", date:"2026-05-15", cat:"practice", color:"#c1d8f6, #d8c1f0", h:300, src:"tribute_20260515.mp4", thumbImg:"https://i.postimg.cc/SQ7y9MxR/image.jpg", locked:false},
+  {title:"致敬舞台", date:"2026-05-15", cat:"practice", color:"#f6c1c1, #f6e0c1", h:320, src:"zhijing_20260515.mp4", thumbImg:"https://i.postimg.cc/brNCBWch/IMG-20260517-023718.jpg", locked:false},
+  {title:"Show me your love + graduation", date:"2026-05-15", cat:"practice", color:"#c1d8f6, #d8c1f0", h:300, src:"showmeyoulove+graduation_20260515_.mp4", thumbImg:"https://i.postimg.cc/tJMF2nRq/IMG-20260515-211811.jpg", locked:false},
+  {title:"MISS HAMIN", date:"2026-05-15", cat:"practice", color:"#f6c1c1, #f6e0c1", h:360, src:"MISS_20260515.mp4", thumbImg:"https://i.postimg.cc/HkGSQnS9/Videoshot-20260517-023918-motion-photo.jpg", locked:false},
+  {title:"Show me your love", date:"2026-05-15", cat:"practice", color:"#c1d8f6, #d8c1f0", h:300, src:"Smyl_20260515_.mp4", thumbImg:"https://i.postimg.cc/HxhGHHT3/Videoshot-20260517-023946-motion-photo.jpg", locked:false},
+  {title:"毕业舞台", date:"2026-05-15", cat:"practice", color:"#f6c1c1, #f6e0c1", h:200, src:"graduation photo_20260515.mp4", thumbImg:"https://i.postimg.cc/hjbkzx8p/15ending.jpg", locked:false},
+  {title:"We go 01", date:"2026-05-15", cat:"practice", color:"#c1d8f6, #d8c1f0", h:320, src:"We go_20260515_01.mp4", thumbImg:"https://i.postimg.cc/pLPMvsDB/IMG-20260515-200007.jpg", locked:false},
+  {title:"We go 02", date:"2026-05-15", cat:"practice", color:"#f6c1c1, #f6e0c1", h:300, src:"We go_20260515_02.mp4", thumbImg:"https://i.postimg.cc/SsdzZT7t/IMG-20260515-200023.jpg", locked:false},
+  {title:"We go 03", date:"2026-05-15", cat:"practice", color:"#c1d8f6, #d8c1f0", h:500, src:"We go_20260515_03.mp4", thumbImg:"https://i.postimg.cc/3Rk5hhZV/Videoshot-20260517-024727-motion-photo.jpg", locked:false},
+  {title:"花絮", date:"2026-05-15", cat:"practice", color:"#f6c1c1, #f6e0c1", h:200, src:"huaxu_20260515.mp4", thumbImg:"https://i.postimg.cc/5ywn8K37/Videoshot-20260517-024848-motion-photo.jpg", locked:false},
+  {title:"开场前", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:200, src:"kaichang_20260516.mp4", thumbImg:"https://i.postimg.cc/c4D8FyJz/IMG-20260516-170240.jpg", locked:false},
+  {title:"再次重逢的世界", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:200, src:"zaicichonfengdeshijie_20260516_01.mp4", thumbImg:"https://i.postimg.cc/pLbtbyyH/IMG-20260516-170342.jpg", locked:false},
+  {title:"再次重逢的世界", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:420, src:"zaicichonfengdeshijie_20260516_02.mp4", thumbImg:"https://i.postimg.cc/Z5wt9HVx/Videoshot-20260516-220329-motion-photo.jpg", locked:false},
+  {title:"自我介绍 01", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:450, src:"talk_20260516_1.mp4", thumbImg:"https://i.postimg.cc/Xq6kT7Qw/IMG-20260516-170924.jpg", locked:false},
+  {title:"自我介绍 02", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:450, src:"talk_20260516_2.mp4", thumbImg:"https://i.postimg.cc/5yRHzsT6/IMG-20260516-171201.jpg", locked:false},
+  {title:"自我介绍 03", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:550, src:"talk_20260516_3.mp4", thumbImg:"https://i.postimg.cc/B6ZccwYm/IMG-20260516-170915.jpg", locked:false},
+  {title:"小片段", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:450, src:"talk_20260516_04.mp4", thumbImg:"https://i.postimg.cc/cJtcL59F/IMG-20260516-171255.jpg", locked:false},
+  {title:"自我介绍 04", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:400, src:"talk_20260516_4.mp4", thumbImg:"https://i.postimg.cc/W3CzbXKR/IMG-20260516-171302.jpg", locked:false},
+  {title:"大屏", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:400, src:"big screen_.mp4", thumbImg:"https://i.postimg.cc/TPpMtG73/IMG-20260516-171404.jpg", locked:false},
+  {title:"小片段", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:200, src:"team_20260516_1.mp4", thumbImg:"https://i.postimg.cc/SNHkHn9h/E53E746F4A25311D11171A033C89F557.png", locked:false},
+  {title:"撒娇", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:420, src:"lovely_20260516_.mp4", thumbImg:"https://i.postimg.cc/3RgHM1gM/IMG-20260516-172552.jpg", locked:false},
+  {title:"喝水", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:400, src:"drink water_20260516_.mp4", thumbImg:"https://i.postimg.cc/NFPmMpBM/IMG-20260516-172742.jpg", locked:false},
+  {title:"骰子", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:400, src:"tou zi_20260516_.mp4", thumbImg:"https://i.postimg.cc/SKFMPngj/IMG-20260516-173156.jpg", locked:false},
+  {title:"游戏", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:350, src:"game_20260516_.mp4", thumbImg:"https://i.postimg.cc/Wzjq1CBh/IMG-20260516-172902.jpg", locked:false},
+  {title:"扔骰子", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:400, src:"rengtouzhi_20260516_.mp4", thumbImg:"https://i.postimg.cc/ydDSG0F6/IMG-20260516-172819.jpg", locked:false},
+  {title:"sorry", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:400, src:"sorry_20260516_.mp4", thumbImg:"https://i.postimg.cc/Hk0KJy8m/IMG-20260516-173306.jpg", locked:false},
+  {title:"刀马 01", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:400, src:"daoma_20260516_1.mp4", thumbImg:"https://i.postimg.cc/26589mNn/IMG-20260516-173530.jpg", locked:false},
+  {title:"刀马 02", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:400, src:"daoma_20260516_2.mp4", thumbImg:"https://i.postimg.cc/DywHWZdJ/IMG-20260516-173523.jpg", locked:false},
+  {title:"say hi", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:400, src:"say hi_20260516_.mp4", thumbImg:"https://i.postimg.cc/0Q6r2xWW/IMG-20260516-173652.jpg", locked:false},
+  {title:"Wolf", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:400, src:"wolf_20260516_1.mp4", thumbImg:"https://i.postimg.cc/CKnRHkkr/wei-xin-tu-pian-20260709135352-7547-56.png", locked:false},
+  {title:"Wolf 02", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:450, src:"wolf_20260516_2.mp4", thumbImg:"https://i.postimg.cc/jd9K69cY/wei-xin-tu-pian-20260709135352-7548-56.png", locked:false},
+  {title:"梦想发射计划", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:400, src:"dream launch_20260516_.mp4", thumbImg:"https://i.postimg.cc/2yt6Z5yt/image.jpg", locked:false},
+  {title:"Dance out", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:400, src:"danceout_20260516_.mp4", thumbImg:"https://i.postimg.cc/SNSydCC1/IMG-20260516-180336.jpg", locked:false},
+  {title:"加藤清正来了 01", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:500, src:"加藤清正来了_20260516_1.mp4", thumbImg:"https://i.postimg.cc/tgZSHvGH/IMG-20260516-181953.jpg", locked:false},
+  {title:"加藤清正来了 02", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:500, src:"加藤清正来了_20260516_2.mp4", thumbImg:"https://i.postimg.cc/R0gHX4b2/IMG-20260516-182016.jpg", locked:false},
+  {title:"惊鸿舞", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:500, src:"惊鸿舞_20260516_.mp4", thumbImg:"https://i.postimg.cc/htcRcdSh/Videoshot-20260516-211426-motion-photo.jpg", locked:false},
+  {title:"宫廷舞", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:500, src:"宫廷舞_20260516_.mp4", thumbImg:"https://i.postimg.cc/1zM9LK6v/IMG-20260516-182907.jpg", locked:false},
+  {title:"致敬", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:500, src:"致敬_20260516_.mp4", thumbImg:"https://i.postimg.cc/wvZcQLWM/IMG-20260516-183443.jpg", locked:false},
+  {title:"Tribute 01", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:200, src:"tribute_20260516_1.mp4", thumbImg:"https://i.postimg.cc/52WJkrHT/wei-xin-tu-pian-20260709152900-433-100.png", locked:false},
+  {title:"Tribute 02", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:400, src:"tribute_20260516_2.mp4", thumbImg:"https://i.postimg.cc/1zM9LK6v/IMG-20260516-182907.jpg", locked:false},
+  {title:"show me your love 01", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:450, src:"showmeyourlove_20260516_1.mp4", thumbImg:"https://i.postimg.cc/dV5thYtY/IMG-20260516-185657.jpg", locked:false},
+  {title:"一寸光阴一寸金", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:200, src:"一寸光阴一寸金_20260516_.mp4", thumbImg:"https://i.postimg.cc/8P8bY8GF/IMG-20260516-191239.jpg", locked:false},
+  {title:"We go 特写", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:200, src:"we go_20260516_.mp4", thumbImg:"https://i.postimg.cc/NG6fvTTX/IMG-20260516-191039.jpg", locked:false},
+  {title:"毕业致辞 ", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:400, src:"毕业致辞_20260516_1.mp4", thumbImg:"https://i.postimg.cc/RF4WtRxf/IMG-20260516-190242.jpg", locked:false},
+  {title:"毕业致辞 01", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:400, src:"毕业致辞_20260516_2.mp4", thumbImg:"https://i.postimg.cc/Fs9w6JNf/Videoshot-20260516-205554-motion-photo.jpg", locked:false},
+  {title:"毕业照", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:200, src:"毕业照_20260516_.mp4", thumbImg:"https://i.postimg.cc/B6ztzG18/IMG-20260516-190558.jpg", locked:false},
+  {title:"We go", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:400, src:"We go_20260516_1.mp4", thumbImg:"https://i.postimg.cc/pTvtXcMH/Videoshot-20260516-205242-motion-photo.jpg", locked:false},
+  {title:"We go 01", date:"2026-05-16", cat:"practice", color:"#c1d8f6, #d8c1f0", h:400, src:"we go_20260516_2.mp4", thumbImg:"https://i.postimg.cc/Rhym9SMQ/Videoshot-20260516-205148-motion-photo.jpg", locked:false},
+  {title:"END", date:"2026-05-16", cat:"practice", color:"#f6c1c1, #f6e0c1", h:500, src:"end_20260516_.mp4", thumbImg:"https://i.postimg.cc/WzNL8zsG/666-20260709170233-435-100.png", locked:false},
+];
+
+const wall = document.getElementById('wall');
+const overlay = document.getElementById('modalOverlay');
+const modalVideo = document.getElementById('modalVideo');
+const modalTitle = document.getElementById('modalTitle');
+const modalDate = document.getElementById('modalDate');
+
+function render(filter='all'){
+  wall.innerHTML = '';
+  videos
+    .filter(v => filter === 'all' || v.cat === filter)
+    .forEach((v) => {
+      const card = document.createElement('div');
+      card.className = 'card' + (v.locked ? ' locked' : '');
+      card.innerHTML = `
+        <div class="thumb" style="height:${v.h}px;background:url(${v.thumbImg}) center/cover no-repeat;">
+          ${v.locked
+            ? '<div class="lock-label">🔒 待解锁</div>'
+            : '<div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>'}
+        </div>
+        <div class="meta">
+          <p class="v-title">${v.title}</p >
+          <p class="v-date">发布时间:${v.date}</p >
+        </div>`;
+      if(!v.locked){
+        card.addEventListener('click', () => openModal(v));
+      }
+      wall.appendChild(card);
+    });
+}
+
+function openModal(v){
+  modalVideo.src = v.src;
+  modalTitle.textContent = v.title;
+  modalDate.textContent = '发布时间:' + v.date;
+  overlay.classList.add('show');
+  modalVideo.play().catch(()=>{});
+}
+
+function closeModal(){
+  overlay.classList.remove('show');
+  modalVideo.pause();
+  modalVideo.src = '';
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+overlay.addEventListener('click', (e) => {
+  if(e.target === overlay) closeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') closeModal();
+});
+
+
+
+
+
+render();
+</script>
+</body>
+</html>

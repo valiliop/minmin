@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于民民</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body{
+            background: #ffeff6;
+        }
+
+        /* 导航栏 */
+    .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 40px;
+    background: #F0E0F0;
+}
+
+    .logo {
+    font-weight: bold;
+    font-size: 21px;
+    color: #ffffff;
+}
+
+.nav-links {
+    display: flex;
+    gap: 40px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 6px;
+}
+
+        /* 轮播图*/
+        .swiper{
+            width: 100%;
+            height: 900px;
+            position:relative;
+            overflow:hidden;
+        }
+        .swiper-wrapper{
+                height: 100%;
+                display:flex;
+                transition: transform 0.8s ease;
+        }
+        .swiper-slide{
+            width: 100%;
+            height: 100%;
+            flex-shrink: 0;
+            position:relative;
+        }
+        .swiper-slide img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .swiper-slide::after{
+            content: "";
+            position: absolute;
+            left: 0;
+            top:0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,192,203,0.25);
+        }
+        .swiper-text{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 36px;
+            font-weight: bold;
+            text-shadow:0px 2px 8px rgba(0,0,0,0.3);
+            z-index:2;
+        }
+        /* 内容 */
+        .container {
+            padding: 0 20px;
+            max-width: 900px;
+            margin: 50px auto;
+        }
+        .about-card{
+            background: ragb(255,255,255,0,0.55);
+            backdrop-filter:blur(12px);
+            border:1px solid rgba(255,182,193,0.2);
+            border-radius: 22px;
+            padding:50px 42px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+        }
+        .about-card h2{
+            font-size: 26px;
+            color: #F0E0F0;
+            margin-bottom: 26px;
+            text-align: center;
+        }
+        .info-grid{
+            display: grid;
+            gap: 16px 20px;
+            margin-bottom: 40px;
+            grid-template-columns: 1fr 1fr;
+        }
+        .info-item{
+            background: rgba(255,255,255,0.7);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 15px;
+            color: #444;
+            border: 1px solid rgba(255,179,186,0.15);
+        }
+        .desc{
+            line-height: 2;
+            color: #555;
+            font-size: 16px;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        /* 文章＋侧边栏 */
+        .extra-section {
+            display: grid;
+            gap: 30px;
+            max-width: 2000px;
+            margin: 0 auto 40px;
+            padding: 0 20px;
+            grid-template-columns: 5fr 1fr;
+            align-items: start;
+        }
+        .main-content {
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,182,193,0.2);
+            border-radius: 22px;
+            padding: 30px;
+            transition: 0.3s;
+            overflow: hidden;
+        }
+        .main-content:hover {
+            box-shadow: 0 12px 30px rgba(255,182,193,0.1);
+            transform: translateY(-4px);
+        }
+        .main-content h2 {
+            font-size: 22px;
+            color: #F0E0F0;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        /* 魅力舞台小轮播（带箭头和圆点） */
+        .stage-carousel {
+            position: relative;
+            overflow: hidden;
+            width:100%;
+            height: 650px;
+            border-radius: 12px;
+            margin-bottom: 15px;     
+        }
+        .stage-wrapper {
+            display: flex;
+            transition: transform 0.6s ease;
+            height: 100%;
+        }
+        .stage-slide {
+            width: 100%;
+            height: 100%;
+            flex-shrink: 0;
+        }
+        .stage-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* 小轮播箭头 */
+        .stage-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            backdrop-filter: blur(6px0);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #ff69b4;
+            z-index: 3;
+            transition: 0.3s;
+        }
+        .stage-btn:hover {
+            background: rgba(255, 182, 193, 0.9);
+            color:#fff;
+        }
+        .stage-prev {
+            left: 10px;
+        }
+        .stage-next {
+            right: 10px;
+        }
+        /* 小轮播圆点 */
+        .stage-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+        .stage-dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .stage-dot.active {
+            background: #ff69b4;
+        }
+
+        /* 侧边栏(可跳转) */
+        .right-sidebar {
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,182,193,0.2);
+            border-radius: 22px;
+            padding: 20px;
+            height: fit-content;
+        }
+        .right-sidebar h3 {
+            font-size: 16px;
+            color: #ff69b4;
+            margin-bottom: 15px;
+        }
+        .sidebar-list {
+            list-style: none;
+            padding:0;
+            margin:0;
+        }
+        .sidebar-list li {
+            margin: 12px 0;
+        }
+        .sidebar-list a {
+            color: #555;
+            text-decoration: none;
+            transition: 0.2s;
+            display: block;
+            font-size: 14px;
+            padding: 6px 0;
+        }
+        .sidebar-list a:hover {
+            color: #ff69b4;
+            padding-left: 6px;
+            font-weight: bold;
+        }
+
+        /* 卡片区域 */
+        .card-group {
+            display: flex;
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto 60px;
+            padding: 0 20px;
+            grid-template-columns: repeat(3,1fr);
+        }
+        .card {
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,182,193,0.2);
+            border-radius: 22px;
+            overflow:hidden;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .card:hover {
+            box-shadow: 0 15px 30px rgba(255,182,193,0.15);
+            transform: translateY(-6px);
+        }
+        .card img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+        .card .text {
+            padding: 18px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            text-align: center;
+        }
+        /* 底部 */
+  .footer {
+  background-color: #F0E0F0;
+  padding: 10px;
+  text-align: center;
+  color: #fff;
+  margin-top:60px ;
+  font-size: 14px;
+}
+        
+.footer-links a {
+ color: #fff;
+ text-decoration: none;
+ margin: 0 10px;
+ }
+        /* 新增：下方内容 + 三列卡片 */
+.content-section {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+.text-content {
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,182,193,0.2);
+    border-radius: 22px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+.text-content h2 {
+    font-size: 22px;
+    color: #ff69b4;
+    text-align: center;
+    margin-bottom: 15px;
+}
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+.card-item {
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,182,193,0.2);
+    border-radius: 18px;
+    overflow: hidden;
+}
+.card-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+.card-item h3, .card-item p {
+    padding: 10px 15px;
+    margin: 0;
+}
+.card-item h3 {
+    color: #ff69b4;
+    font-size: 16px;
+}
+.card-item p {
+    font-size: 13px;
+    color: #555;
+    padding-bottom: 15px;
+}
+.card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.card-item {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.card-link:hover .card-item {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(255,182,193,0.3);
+}
+
+ /* 下面普通轮播样式 */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 30px auto;
+  overflow: hidden;
+}
+
+.carousel-wrapper {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+
+.photo-slide {
+  min-width: 100%;
+  box-sizing: border-box;
+  padding: 0 10px;
+}
+
+.card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(255,255,255,0.55);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,182,193,0.2);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(255,182,193,0.1);
+}
+
+.card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.card h3 {
+  font-size: 16px;
+  color: #ff69b4;
+  padding: 15px;
+  margin: 0;
+  text-align: center;
+}
+
+.hover-carousel-fix {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1100px;
+  height: 400px;
+  margin: 50px auto;
+  overflow: hidden;
+  gap: 8px;
+}
+
+.carousel-card {
+  position: relative;
+  height: 360px;
+  width: 70px;
+  border-radius: 22px;
+  overflow: hidden;
+  transition: all 0.55s cubic-bezier(0.28, -0.03, 0, 1);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+
+/* 1. 默认第一张卡片就是大屏 */
+.carousel-card.active {
+  width: 520px;
+}
+
+/* 2. hover 放大逻辑（保持不变） */
+.hover-carousel-fix .carousel-card:hover {
+  width: 520px;
+}
+
+.hover-carousel-fix:hover .carousel-card:not(:hover) {
+  width: 70px;
+}
+
+.carousel-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+}
+
+.carousel-link img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.carousel-desc {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.65));
+  opacity: 0;
+  transform: translateY(10px);
+  transition: 0.4s ease;
+}
+
+/* 3. 默认第一张卡片的文字也要显示 */
+.carousel-card.active .carousel-desc {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.carousel-card:hover .carousel-desc {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.carousel-desc h3 {
+  color: #fff;
+  font-size: 16px;
+  margin: 0;
+  text-align: center;
+}
+    </style>
+</head>
+
+<body>
+
+    <!-- 外层容器加 class="navbar"，CSS才能生效 -->
+<header class="navbar">
+  <div class="logo">HAMIN World</div>
+  <div class="nav-links">
+    <a href="hamin.html">首页</a>
+    <a href="about.html" class="active">关于民民</a>
+    <a href="stage.html">舞台合集</a>
+    <a href="Fancam.html">演出直拍</a>
+    <a href="photograph.html">照片</a>
+    <a href="more.html">其他</a>
+  </div>
+</header>
+    
+
+
+<!-- 图片轮播区域 -->
+<div class="swiper">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide">
+            <img src="https://i.postimg.cc/6pHwd3CZ/8162d88a60dff35e72682c4fdede5b88.jpg" alt="Slide 1">
+        </div>
+        <div class="swiper-slide">
+            <img src="https://i.postimg.cc/VLpW59VM/IMG-3773.jpg" alt="Slide 2">
+        </div>
+        <div class="swiper-slide">
+            <img src="https://i.postimg.cc/wjCyMjxV/IMG-1936.jpg" alt="Slide 3">
+        </div>
+        <div class="swiper-slide">
+            <img src="https://i.postimg.cc/qvRXyqTT/IMG-9842.jpg" alt="Slide 4">
+        </div>
+    </div>
+</div>
+
+    <div class="about-card">
+        <h2>关于民民</h2>
+        <div class="info-grid">
+            <div class="info-item"><strong>姓名：</strong>李河民/HAMIN/이하민</div>
+            <div class="info-item"><strong>出生日期：</strong>2006年8月5日</div>
+            <div class="info-item"><strong>出生地点: </strong>韩国龙仁</div>
+                <div class="info-item"><strong>动物塑： </strong>piano小羊塑/巧克力猫塑/流氓兔塑/陨石边小狗塑</div>
+                <div class="info-item"><strong>星座：</strong>狮子座</div>
+            <div class="info-item"><strong>性格:</strong>一枚爱吃饭且帅气的评论家</div>
+        </div>
+        <p class="desc">李河民超级喜欢吃，有吃的就特别容易变得亲近，而且会吃的特别有食欲，特别是炒饭，吃的很有食欲是别人会迷上你的魅力点，喜欢的甜品也是论山草莓雪冰。
+            也很擅长憋笑,你憋笑的时候像一只特别骄傲的小猫,很可爱,超级无敌可爱。还有就是李河民的嘴反正不能闲着，要么吃要么说，是吧宝宝。
+            你的座右铭是最后一局了！当你的练习效果跟你想的不一样，不满意的时候你会特别自责，会很害怕变成这样。你想把每一件事情都当最后一次，会特别认真，减肥也是，练习也是。
+            如果你的杂念变多了你会选择运动，运动完后喝蛋白粉你会格外有成就感回想这一天也过得很有意义。
+            你说一直在想自己到底擅长做什么,你说是减肥,在3周内大概减了10kg,那时候经常被夸,像是第一次被认可的瞬间。
+            在杂志采访的时候你问自己最近的杂念有没有少一些，不要忘记练习基本功。
+            在《请回答高中》的采访视频里,发觉河民与"吃"相关的回答几乎贯穿始末,吃喜吃,但又能用自己的毅力来打败食欲望,这样的人我相信做什么都会成功的！
+        </p>
+    </div>
+</div>
+
+<!-- 舞台魅力小轮播（箭头加圆点）-->
+<div class="extra-section">
+     <div class="main-content">
+          <h2>可我觉得民很神圣啊</h2>
+          <div class="stage-carousel">
+               <div class="stage-btn stage-prev" onclick="stagePrev()">&lt;</div>
+               <div class="stage-btn stage-next" onclick="stageNext()">&gt;</div>
+               <div class="stage-wrapper">
+                    <div class="stage-slide">
+                         <img src="https://i.postimg.cc/NG5d4S4Z/IMG-9208.jpg" alt="Stage 0">
+                    </div>
+                    <div class="stage-slide">
+                         <img src="https://i.postimg.cc/85FPcZmn/41259a2252939657f6f80645038ab783.jpg" alt="Stage 1">
+                    </div>
+                    <div class="stage-slide">
+                         <img src="https://i.postimg.cc/NMWGHRNq/6f1290448d22dfd2e12f4122ad066ad2.jpg" alt="Stage 2">
+                    </div>
+                    <div class="stage-slide">
+                         <img src="https://i.postimg.cc/3RPrv2tq/842020907ae8e4528c1abf913bd51e05.jpg" alt="Stage 3">
+                    </div>
+                    <div class="stage-slide">
+                         <img src="https://i.postimg.cc/6pHwd3CZ/8162d88a60dff35e72682c4fdede5b88.jpg" alt="Stage 4">
+                    </div>
+                </div>
+                <div class="stage-dots">
+                    <div class="stage-dot active" onclick="goToStage(0)"></div>
+                    <div class="stage-dot" onclick="goToStage(1)"></div>
+                    <div class="stage-dot" onclick="goToStage(2)"></div>
+                    <div class="stage-dot" onclick="goToStage(3)"></div>
+                    <div class="stage-dot" onclick="goToStage(4)"></div>
+                </div>
+          </div>
+          <p style="text-align:center;">我就是这样一个可怜的弱女子，一个被李河民扑面而来的男性荷尔蒙冲击得昏天黑地语无伦次七荤八素两眼昏花虚弱得快要晕倒的可怜女人</p>
+     </div>
+
+     <div class="right-sidebar">
+          <h3>最新内容</h3>
+          <u1 class="sidebar-list">
+                <li><a href="stage.html">🎞️ 民民的舞台合集</a></li>
+                <li><a href="Practice room.html">🎬 民民的直拍合集</a></li>
+                <li><a href="quotes.html">📝 民民的语录分享合集</a></li>
+                <li><a href="other.html">🍫 其他关于民民的内容合集</a></li>
+          </u1>
+     </div>
+    </div>
+</div>
+
+<!-- 新增：文字板块 + 三列卡片 -->
+<section class="content-section">
+    <div class="text-content">
+        <h2>可我觉得民很神圣啊s</h2>
+        <p>卷以前住在釜山,因为爸爸妈妈工作的原因所以小学的时候去菲律宾留学了,民民有好多照片都是在学校官网扒出来的,课程非常丰富,直到22年才回的韩国,hamin进公司有一小部分原因是受到了妹妹的影响,因为妹妹梦想是当idol,所以和妹妹一起去参加了选秀,民民为此也付出了很多 ,曾经一个月只吃李子减掉了大概16斤,真的是一个很有毅力的孩子
+	       hamin有两个妹妹,家里的老大在这里是老幺。</p>
+        <p>民民在菲律宾的时候学了很多技能,钢琴、架子鼓、笛子等等等等 ,是个多才多艺的孩子
+	       卷妈们都知道一句话,民以食为天 ,哈哈哈哈哈,这句话是因为小卷被爆出来的小时候的照片,基本每一张照片都是吃饭的时候拍的哈哈哈哈 ,而且有一次上班路上 卷买了个雪糕吃 看见大家在拍,就赶紧藏雪糕袋子,结果急急忙忙的棍子没塞进包里。</p>
+	       hamin有好多好多塑,因为首尔场是卷毛,所以妈妈们想出了piano小羊塑,因为卷有一个巧克力猫的挂件,妈妈们觉得流鼻涕的巧克力猫特别像他小时候的一张照片,所以还有巧克力猫塑,然后就是流氓兔塑,因为民民喜欢眯眼,妈妈们觉得很像他,当然还有狗塑哈哈哈哈
+	       还有一个卷一直被吐槽的点就是他的三星手机哈哈哈,本来是没什么事情的,直到公司发了hamin的自拍照,也就是这张图,好多卷妈才开始劝他换手机的哈哈哈哈
+           这个孩子真的很爱购物逛街,不完全统计有这些哈哈哈哈,是别人发的周末逛街偶遇,而且某次演出之前,孩子们去环球玩,这个大民哥手里的购物袋塞的满满的啊哈哈哈哈,有的宝喊他AAA.代购大民哥哈哈哈哈
+	       SM三十周年的时候,公司发了个小粉球的挂件,民民还给他洗了澡哈哈哈哈。</p>
+	    <p>早期的时候大家蹲下班路,民民都是穿着那件熊猫服,带的小仓鼠耳机（听说小仓鼠耳机是为了区分耳机左右）不过因为这件衣服还被骂过 我儿只是想让大家都能认出来他啊
+           在一草莓沙冰物料中已知李河民去SM试镜时看到了旷野,旷野22年11月17日才开业,那么卷成为练习生最早不超过22年11月,首尔初舞台满打满算才练习两年,但却有这么西吸睛的舞台表现力,真的是有天赋又努力的脸蛋天才,而且24年就出现在了SM30周年纪录片,也就意味着练习了一年多就成为了核心,天赋加努力怎么输。     
+        </p>
+    </div>
+
+    <div class="cards-container">
+          <!-- 卡片 1 -->
+          <a href="minmin1010235.mp4" target="_blank" class="card-link">
+            <div class="card-item">
+             <img src="https://i.postimg.cc/VLpW59VM/IMG-3773.jpg" alt="">
+             <h3>机甲卷帝</h3>
+             <p>1010235:深深地爱着你</p>
+           </div>
+        </a>
+
+          <!-- 卡片 2 -->
+          <a href="LeeHamin2501111080p.mp4" target="_blank" class="card-link">
+            <div class="card-item" >
+              <img src="https://i.postimg.cc/R0HqTcFt/IMG-9134.jpg" alt="Hamin Lee posing serenely in Seoul, radiating a charming and innocent aura.">
+              <h3>首尔白月光</h3>
+              <p>完全就是嬛嬛级别</p>
+            </div>
+          </a>
+              <!-- 卡片 3 -->
+          <a href="Callmebaby1080p.mp4" target="_blank" class="card-link">
+            <div class="card-item">
+              <img src="https://i.postimg.cc/152yfGjz/220118.jpg" alt="">
+              <h3>call me baby</h3>
+              <p>going卷,性感疯了！</p>
+            </div>
+          </a>
+    </div>
+</section>
+
+<div class="hover-carousel-fix">
+  <div class="carousel-card active">
+    <a href="other.html" class="carousel-link">
+      <img src="https://i.postimg.cc/BnzNW6bz/220324.jpg" alt="学长你好美好">
+      <div class="carousel-desc">
+        <h3>学长你好美好</h3>
+      </div>
+    </a>
+  </div>
+
+  <div class="carousel-card">
+    <a href="stage.html" class="carousel-link">
+      <img src="https://i.postimg.cc/QMWmj3KR/IMG-8147.jpg" alt="舞台合集">
+      <div class="carousel-desc">
+        <h3>舞台合集</h3>
+      </div>
+    </a>
+  </div>
+
+  <div class="carousel-card">
+    <a href="Fancam.html" class="carousel-link">
+      <img src="https://i.postimg.cc/MT2DTFyT/IMG-8400.jpg" alt="演出直拍">
+      <div class="carousel-desc">
+        <h3>演出直拍</h3>
+      </div>
+    </a>
+  </div>
+
+  <div class="carousel-card">
+    <a href="quotes.html" class="carousel-link">
+      <img src="https://i.postimg.cc/90cYPwgV/IMG-8539.gif" alt="语录分享">
+      <div class="carousel-desc">
+        <h3>语录分享</h3>
+      </div>
+    </a>
+  </div>
+
+  <div class="carousel-card">
+    <a href="other.html" class="carousel-link">
+      <img src="https://i.postimg.cc/hGbrX0pR/Live-20260419210255199.jpg" alt="其他内容">
+      <div class="carousel-desc">
+        <h3>其他内容</h3>
+      </div>
+    </a>
+  </div>
+</div>
+
+    <!-- 轮播箭头 -->
+    <div class="photo-btn photo-prev">&lt;</div>
+    <div class="photo-btn photo-next">&gt;</div>
+
+    <!-- 小圆点 -->
+    <div class="photo-dots">
+      <span class="photo-dot active"></span>
+      <span class="photo-dot"></span>
+      <span class="photo-dot"></span>
+      <span class="photo-dot"></span>
+      <span class="photo-dot"></span>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+    <div class="footer-links">
+        <a href="hamin.html">首页</a>
+        <a href="about.html">关于民民</a>
+        <a href="stage.html">舞台合集</a>
+        <a href="Fancam.html">演出直拍</a>
+        <a href="photograph.html">照片</a>
+        <a href="other.html">其他</a>
+     </div>
+     <div>Always,flow like water.-HaminLee </div>
+</div>
+<!-- 轮播自动播放 -->
+<script>
+    let index = 0;
+    const wrapper = document.querySelector('.swiper-wrapper');
+    const slides = document.querySelectorAll('.swiper-slide');
+    const total = slides.length;
+
+    function autoplay() {
+        index++;
+        if (index >= total) {
+            index = 0;
+        }
+        wrapper.style.transform = `translateX(-${index * 100}%)`;
+    }
+    setInterval(autoplay, 2800); 
+
+    // 舞台小轮播
+    let sindex = 0;
+    const stageWrapper = document.querySelector('.stage-wrapper');
+    const stageSlides = document.querySelectorAll('.stage-slide');
+    const stotal = stageSlides.length;
+    const dots = document.querySelectorAll('.stage-dot');
+
+    // 更新小圆点状态
+    function stageAutoplay() {
+        sindex++;
+        if (sindex >= stotal) {
+            sindex = 0;
+        }
+        stageWrapper.style.transform = `translateX(-${sindex * 100}%)`;
+        updateDots();
+        stageTimeout = setTimeout(stageAutoplay, 3000);
+    }
+
+    //下一张
+    function stagNext() {
+        clearTimeout(stageTimeout);
+        sindex++;
+        if (sindex >= stotal) {
+            sindex = 0;
+        }
+        stageWrapper.style.transform = `translateX(-${sindex * 100}%)`;
+        updateDots();
+        stageTimeout = setTimeout(stageAutoplay, 3000);
+    }
+
+    //点击圆点跳转
+    function goToStage(index) {
+        clearTimeout(stageTimeout);
+        sindex = index;
+        stageWrapper.style.transform = `translateX(-${sindex * 100}%)`;
+        updateDots();
+        stageTimeout = setTimeout(stageAutoplay, 3000);
+    }
+</script>
+<script>
+// 轮播控制逻辑
+let currentStage = 0;
+const totalStages = document.querySelectorAll('.stage-slide').length;
+const stageDots = document.querySelectorAll('.stage-dot');
+
+// 更新轮播状态
+function updateStage() {
+    // 移动轮播图
+    stageWrapper.style.transform = `translateX(-${currentStage * 100}%)`;
+    // 更新圆点状态
+    stageDots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentStage);
+    });
+}
+
+// 上一张
+function stagePrev() {
+    currentStage = (currentStage - 1 + totalStages) % totalStages;
+    updateStage();
+}
+
+// 下一张
+function stageNext() {
+    currentStage = (currentStage + 1) % totalStages;
+    updateStage();
+}
+
+// 点击圆点切换
+function goToStage(index) {
+    currentStage = index;
+    updateStage();
+}
+
+// 自动轮播（可选，3秒切换一次）
+setInterval(() => {
+    stageNext();
+}, 3000);
+
+// 视频播放功能
+const modal = document.getElementById('videoModal');
+const videoPlayer = document.getElementById('videoPlayer');
+const closeBtn = document.querySelector('.close-btn');
+
+function openVideo(videoSrc) {
+  videoPlayer.src = videoSrc;
+  modal.style.display = 'flex';
+  videoPlayer.play();
+}
+
+closeBtn.onclick = function() {
+  modal.style.display = 'none';
+  videoPlayer.pause();
+}
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = 'none';
+    videoPlayer.pause();
+  }
+}
+
+// 照片轮播控制
+// 普通轮播控制
+let scIndex = 0;
+const scWrapper = document.querySelector('.sc-wrapper');
+const scSlides = document.querySelectorAll('.sc-slide');
+
+function updateSC() {
+  scWrapper.style.transform = `translateX(-${scIndex * 100}%)`;
+}
+
+document.querySelector('.sc-next').onclick = () => {
+  scIndex = (scIndex + 1) % scSlides.length;
+  updateSC();
+};
+
+document.querySelector('.sc-prev').onclick = () => {
+  scIndex = (scIndex - 1 + scSlides.length) % scSlides.length;
+  updateSC();
+};
+
+updateSC();
+</script>
+</body>
+</html>

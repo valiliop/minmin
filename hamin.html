@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 首页 </title>
+    <style>
+        *{
+            margin: 0;
+            padding:0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei",sans-serif;
+        }
+
+        /* 导航栏 */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 40px;
+    background: #F0E0F0
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 21px;
+    color: #ffffff;
+}
+
+.nav-links {
+    display: flex;
+    gap: 40px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 6px;
+}
+
+        /*轮播banner*/
+        .banner {
+            background-color: #F0E0F0;
+            position: relative;
+            display: flex;
+            height: 300px;
+            align-items: center ;
+            justify-content: center;
+            overflow:hidden;
+        }
+        .banner::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url("https://i.postimg.cc/FzSYr2kb/228669.jpg") center/cover no-repeat;
+            opacity: 0.3;
+        }
+        .banner-text {
+            position: relative;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+        /* 主体内容*/
+        .container {
+            padding: 0px 20px;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+        .intro-section {
+            background: #fff0f5;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .intro-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .intro-section p {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+/* 图片画廊父容器：固定高度，防止撑破页面 */
+.gallery-section {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+.gallery-section h2 {
+  text-align: center;
+  color: #F0E0D0;
+  margin-bottom: 30px;
+}
+
+/* 关键：固定高度 + 溢出隐藏 */
+.gallery {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  height: 320px; /* 固定高度 */
+  overflow: hidden; /* 隐藏超出容器的部分 */
+}
+
+/* 图片项：固定宽高，防止变形 */
+.gallery-item {
+  width: 220px;
+  height: 300px;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 图片按比例填充，不拉伸 */
+  display: block;
+}
+
+/* 悬停放大效果 */
+.gallery-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* 点击查看大图弹窗 */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+#modal-img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 8px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 底部 */
+  .footer {
+  background-color: #F0E0F0;
+  padding: 10px;
+  text-align: center;
+  color: #fff;
+  margin-top:60px ;
+  font-size: 14px;
+}
+        
+.footer-links a {
+ color: #fff;
+ text-decoration: none;
+ margin: 0 10px;
+ }
+
+</style>
+</head>
+<body>
+    <!-- 外层容器加 class="navbar"，CSS才能生效 -->
+<header class="navbar">
+  <div class="logo">HAMIN World</div>
+  <div class="nav-links">
+    <a href="hamin.html" class="active">首页</a>
+    <a href="about.html">关于民民</a>
+    <a href="stage.html">舞台合集</a>
+    <a href="Fancam.html">演出直拍</a>
+    <a href="photos.html">照片</a>
+    <a href="more.html">其他</a>
+  </div>
+</header>
+
+    <!--顶部轮播banner-->
+    <div class="banner">
+        <div class="banner-text">欢迎来到HAMIN World!</div>
+    </div>
+
+    <!--主体内容-->
+    <div class="container">
+        <!--介绍区-->
+        <div class="intro-section">
+            <h2>HAMIN的世界</h2>
+            <p>
+                HAMIN/李河民,原名(이하민/Lee Hamin) ,花名"卷",出生于2006年08月05日韩国釜山,O型血ENFJ狮子男一枚,座右铭是"最后一局了!(마지막 세트야!!!)"
+                最初和民民相识,是在SM30周年上的20秒的骑车镜头大家都在问"SM那个骑自行车的男生是谁",在不知道民民名字时大家都还是叫自行车少年/黑卷/haru,在后来的第一本杂志《时装LOFFICIEL》的采访中,民民提到卷卷们取的昵称haru/自行车少年,还有大家留言的生日祝福。
+                他的名字里,"河"代表温柔的溪流，"民"象征温暖的人心,正如民民本人一样,兼具舞台上的爆发力与私下里的治愈感。卷丝们都觉得卷卷很像Piano,在《时装》的明信片中民民也画了Piano,他都知道！</p>
+            <p> 当我看到你玩手指滑板的时候我突然想起来很久之前的一个爆料，“如果和河民一起玩游戏那你绝对赢不过他，因为狮子座的胜负欲很强”
+                我看着视频里的你突然意识到,你才18岁。
+                16岁的你,独自回韩国面试练习生。公司让你减肥,你就一个月只吃李子瘦了16斤,顺利进入韩国四大的sm成为一名练习生。
+                17岁的你.在sm30周年纪录片上首次公开亮相,在雨中骑着单车的少年，让人印象深刻，并收获韩网一众好评。
+                18岁的你,进入公司两年内迅速进入核心出道组,第一次舞台露面就打破公司初策划亲自走到25大c。
+                19岁的你,经历了大半年的打磨，神态更加沉稳，坚定的眼神里满是对舞台的掌控欲，整个人气场变得愈发强大。
+                20岁的你,我希望你以后走的每一条路都会充满着爱。
+                这一切的一切都在向我们说明，我们卷才不是什么大脑空空，性格软弱的人，更不是他们口中所谓的性格无趣的人。我们卷就是有野心，有毅力，有极强的胜负欲的人
+                ，最后一定要出道顺利！</p>
+        </div>
+    </div>
+
+     <div class="gallery-section">
+  <h2>民民速递</h2>
+  <div class="gallery">
+    <div class="gallery-item" onclick="openModal(this)">
+      <img src="https://i.postimg.cc/P59gTFZb/c68284b4d920e6c766643ef10f5246237-livephoto.jpg" alt="HAMIN舞台照1">
+    </div>
+    <div class="gallery-item" onclick="openModal(this)">
+      <img src="https://i.postimg.cc/Bnkr4wDB/449e1025431a53f8cc68dfd0ba6d140d-livephoto.jpg" alt="HAMIN舞台照2">
+    </div>
+    <div class="gallery-item" onclick="openModal(this)">
+      <img src="https://i.postimg.cc/nhgypw7k/220118.jpg" alt="HAMIN舞台照3">
+    </div>
+    <div class="gallery-item" onclick="openModal(this)">
+      <img src="https://i.postimg.cc/nhgypw72/220121.jpg" alt="HAMIN舞台照4">
+    </div>
+  </div>
+</div>
+
+<!-- 点击查看大图弹窗 -->
+<div id="modal" class="modal" onclick="closeModal()">
+  <img id="modal-img" class="modal-content">
+</div>
+
+
+<!--底部导航-->
+<div class="footer">
+    <div class="footer-links">
+        <a href="hamin.html">首页</a>
+        <a href="about.html">关于民民</a>
+        <a href="stage.html">舞台合集</a>
+        <a href="Practice room.html">演出直拍</a>
+        <a href="photograph.html">照片</a>
+        <a href="other.html">其他</a>
+     </div>
+     <div>Always,flow like water.-HaminLee </div>
+</div>
+
+<script>
+// 点击打开大图弹窗
+document.querySelectorAll('.gallery-item').forEach(item => {
+  item.onclick = function() {
+    document.getElementById('modal').style.display = 'flex';
+    document.getElementById('modal-img').src = this.querySelector('img').src;
+  }
+})
+
+// 点击关闭大图弹窗
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+
+</script>
+</body>
+</html>
