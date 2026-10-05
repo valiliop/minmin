@@ -105,7 +105,7 @@ export default async function handler(req, res) {
       });
     }
 
-        const MODELS = ['gemini-3.8-flash', 'gemini-2.5-flash-lite'];
+        const MODELS = ['gemini-3.8-flash', 'gemini-3.5-flash-lite'];
     const requestBody = JSON.stringify({
       systemInstruction: {
         parts: [{ text: CHARACTER_SYSTEM_PROMPT }]
