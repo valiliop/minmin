@@ -92,15 +92,22 @@
 
   let history = [];
 
-  function addBubble(text, who) {
-    const div = document.createElement('div');
-    div.className = 'msg ' + who;
-    div.textContent = text;
-    messagesEl.appendChild(div);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-    return div;
-  }
+    function addBubble(text, who) {
+  // 清理多餘空行
+  text = text
+    .replace(/\n{2,}/g, '\n')   // 把連續空行變成一行
+    .trim();
 
+  // 清完如果是空的就不顯示
+  if (!text) return null;
+
+  const div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.textContent = text;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return div;
+}
   function setBusy(busy) {
     sendBtn.disabled = busy;
     inputEl.disabled = busy;
