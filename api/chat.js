@@ -105,33 +105,35 @@ export default async function handler(req, res) {
       });
     }
 
-    const response = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=' +
-      process.env.GEMINI_API_KEY,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          systemInstruction: {
-            parts: [
-              {
-                text: CHARACTER_SYSTEM_PROMPT
-              }
-            ]
-          },
-          contents: messages.map(message => ({
-            role: message.role === 'assistant' ? 'model' : 'user',
-            parts: [
-              {
-                text: message.content
-              }
-            ]
-          }))
-        })
+        const MODELS = ['gemini-3.8-flash', 'gemini-2.5-flash-lite'];
+    const requestBody = JSON.stringify({
+      systemInstruction: {
+        parts: [{ text: CHARACTER_SYSTEM_PROMPT }]
+      },
+      contents: messages.map(message => ({
+        role: message.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: message.content }]
+      }))
+    });
+
+    let response;
+    for (const model of MODELS) {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        response = await fetch(
+          'https://generativelanguage.googleapis.com/v1beta/models/' +
+            model + ':generateContent?key=' + process.env.GEMINI_API_KEY,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: requestBody
+          }
+        );
+        if (response.ok) break;
+        if (response.status !== 503 && response.status !== 429) break;
+        await new Promise(r => setTimeout(r, 1000));
       }
-    );
+      if (response.ok) break;
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
