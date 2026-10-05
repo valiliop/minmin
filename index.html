@@ -93,21 +93,29 @@
   let history = [];
 
     function addBubble(text, who) {
-  // 清理多餘空行
-  text = text
-    .replace(/\n{2,}/g, '\n')   // 把連續空行變成一行
-    .trim();
+  // 先把多餘空行清乾淨，再按換行拆成多條
+  const lines = text
+    .replace(/\n{2,}/g, '\n')   // 連續空行變成單行
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line !== '');  // 去掉空行
 
-  // 清完如果是空的就不顯示
-  if (!text) return null;
+  // 如果清完後沒有內容，就不顯示
+  if (lines.length === 0) return null;
 
-  const div = document.createElement('div');
-  div.className = 'msg ' + who;
-  div.textContent = text;
-  messagesEl.appendChild(div);
+  let lastDiv = null;
+  lines.forEach(line => {
+    const div = document.createElement('div');
+    div.className = 'msg ' + who;
+    div.textContent = line;
+    messagesEl.appendChild(div);
+    lastDiv = div;
+  });
+
   messagesEl.scrollTop = messagesEl.scrollHeight;
-  return div;
+  return lastDiv;  // 回傳最後一個氣泡（給 typing 用）
 }
+
   function setBusy(busy) {
     sendBtn.disabled = busy;
     inputEl.disabled = busy;
